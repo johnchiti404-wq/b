@@ -5,6 +5,18 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Serve static assets (videos, images, fonts) as-is before the SPA fallback
+[[redirects]]
+  from = "/videos/*"
+  to = "/videos/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/images/*"
+  to = "/images/:splat"
+  status = 200
+
+# SPA fallback — must come last
 [[redirects]]
   from = "/*"
   to = "/index.html"

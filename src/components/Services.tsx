@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Wrench, Paintbrush, Home, BoxSelect, Columns, ChefHat, Video } from 'lucide-react';
+import { LayoutGrid, Wrench, Paintbrush, Chrome as Home, TextSelect as BoxSelect, Columns2 as Columns, ChefHat, Video } from 'lucide-react';
+import { VideoTile } from './VideoTile';
 
 type ServiceItem =
   | { kind: 'image'; title: string; description: string; image: string; icon: React.ElementType }
@@ -111,17 +112,16 @@ export function Services() {
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 ) : (
-                  <video
+                  <VideoTile
                     src={service.videoSrc}
-                    className="h-full w-full object-cover"
-                    loop
-                    muted
-                    playsInline
-                    aria-label={service.title}
+                    label={service.title}
+                    className="h-full w-full"
+                    videoClassName="h-full w-full"
+                    showLabel={false}
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 rounded-full bg-primary p-3 text-white shadow-lg">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-primary p-3 text-white shadow-lg">
                   <service.icon className="h-6 w-6" />
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight, Video } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { VideoTile } from './VideoTile';
 
 type GalleryItem =
   | { kind: 'image'; src: string; alt: string }
@@ -24,8 +25,10 @@ const items: GalleryItem[] = [
   { kind: 'video', src: '/videos/buvid3.mov',  label: 'Site Video 2' },
 ];
 
-// Only image items can open in the lightbox
-const imageItems = items.filter((i): i is Extract<GalleryItem, { kind: 'image' }> => i.kind === 'image');
+// Only image items open in the lightbox; videos have their own modal
+const imageItems = items.filter(
+  (i): i is Extract<GalleryItem, { kind: 'image' }> => i.kind === 'image',
+);
 
 export function Gallery() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -42,26 +45,31 @@ export function Gallery() {
 
   const next = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (lightboxIndex !== null) setLightboxIndex((lightboxIndex + 1) % imageItems.length);
+    if (lightboxIndex !== null)
+      setLightboxIndex((lightboxIndex + 1) % imageItems.length);
   };
 
   const prev = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (lightboxIndex !== null) setLightboxIndex((lightboxIndex - 1 + imageItems.length) % imageItems.length);
+    if (lightboxIndex !== null)
+      setLightboxIndex((lightboxIndex - 1 + imageItems.length) % imageItems.length);
   };
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (lightboxIndex === null) return;
       if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowRight') setLightboxIndex((lightboxIndex + 1) % imageItems.length);
-      if (e.key === 'ArrowLeft') setLightboxIndex((lightboxIndex - 1 + imageItems.length) % imageItems.length);
+      if (e.key === 'ArrowRight')
+        setLightboxIndex((lightboxIndex + 1) % imageItems.length);
+      if (e.key === 'ArrowLeft')
+        setLightboxIndex(
+          (lightboxIndex - 1 + imageItems.length) % imageItems.length,
+        );
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [lightboxIndex]);
 
-  // Track per-image index for lightbox
   let imgCounter = -1;
 
   return (
@@ -83,7 +91,6 @@ export function Gallery() {
           </p>
         </motion.div>
 
-        {/* Uniform grid — every cell is the same size */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {items.map((item, index) => {
             if (item.kind === 'image') {
@@ -110,7 +117,6 @@ export function Gallery() {
               );
             }
 
-            // Video item
             return (
               <motion.div
                 key={index}
@@ -118,22 +124,14 @@ export function Gallery() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: (index % 5) * 0.07 }}
-                className="relative aspect-square overflow-hidden rounded-xl bg-gray-900 shadow-sm"
+                className="aspect-square overflow-hidden rounded-xl shadow-sm"
               >
-                <video
+                <VideoTile
                   src={item.src}
-                  className="h-full w-full object-cover"
-                  loop
-                  muted
-                  playsInline
-                  autoPlay
-                  aria-label={item.label}
+                  label={item.label}
+                  className="h-full w-full"
+                  videoClassName="h-full w-full"
                 />
-                {/* Placeholder shown when video file is absent */}
-                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gray-900/80 text-white/60">
-                  <Video className="h-10 w-10" />
-                  <span className="text-xs font-medium tracking-wide uppercase">{item.label}</span>
-                </div>
               </motion.div>
             );
           })}

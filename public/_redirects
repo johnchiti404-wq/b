@@ -1,0 +1,3 @@
+/videos/*  /videos/:splat  200
+/images/*  /images/:splat  200
+/*  /index.html  200
